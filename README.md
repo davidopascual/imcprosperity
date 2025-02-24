@@ -8,7 +8,7 @@ This repository contains our files for the IMC - Prosperity algorithmic trading 
 - **Simulation Tools**: Backtesting and evaluation tools for strategy performance.
 
 ## Technologies Used
-- Python (Pandas, NumPy, Statistics, Math, Typing
+- Python (Pandas, NumPy, Statistics, Math, Typing)
 - Algorithmic trading frameworks
 - Custom optimization techniques
 
