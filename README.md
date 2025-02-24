@@ -1,6 +1,6 @@
-# IMC - Prosperity Competition
+# IMC Prosperity Competition
 
-This repository contains our files for the IMC - Prosperity algorithmic trading competition. It includes scripts and strategies developed to optimize market-making performance and enhance trading efficiency.
+This repository contains our files for the IMC Prosperity algorithmic trading competition. It includes scripts and strategies developed to optimize market-making performance and enhance trading efficiency.
 
 ## Contents
 - **Trading Strategies**: Implementations of market-making and arbitrage strategies.
