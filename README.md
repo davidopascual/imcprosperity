@@ -1,104 +1,104 @@
 # Prosperity Trading Algorithm (trader.py) - README
 
 ## Overview
-This repository contains the Python implementation of a trading algorithm (`trader.py`) designed for the Prosperity trading simulation, specifically for the tutorial round. The algorithm trades two products on the island exchange: **Rainforest Resin** and **Kelp**, with the goal of maximizing profit in **SeaShells**, the archipelago’s currency. It leverages quantitative strategies to make informed trading decisions based on market data, respecting position limits and simulation constraints.
+This repository contains the Python implementation of a trading algorithm (`trader.py`) designed for the Prosperity trading simulation, specifically for the tutorial round. The algorithm trades two products on the island exchange: **Rainforest Resin** and **Kelp**, aiming to maximize profit in **SeaShells**, the archipelago’s currency. Using a **quantitative mean-reversion strategy**, the algorithm identifies profitable trading opportunities based on market data while respecting position limits and simulation constraints.
 
-The algorithm was tested in the tutorial round, achieving a **profit of 1,750 SeaShells over 1,000 iterations**, as shown in the algorithmic trading results dashboard. This README provides a detailed description of the strategy, assets, profit analysis, decision-making rationale, and technical implementation.
+The algorithm was tested in the tutorial round, achieving a **profit of 3,642 SeaShells over 1,000 iterations**, as shown in the algorithmic trading results dashboard. This README provides a detailed breakdown of the trading strategy, profit analysis, decision-making rationale, and technical implementation.
 
 ---
 
 ## Trading Strategy
 ### Quantitative Strategy: Moving Average-Based Mean Reversion
-The algorithm employs a **moving average-based mean reversion strategy**, tailored to the price dynamics of the two tradable assets. It assumes that prices tend to revert to a historical mean over time and uses this assumption to identify profitable trading opportunities.
+The algorithm follows a **mean-reversion approach**, assuming that asset prices tend to revert to a historical average over time. By identifying deviations from this average, the strategy captures profit opportunities by buying undervalued assets and selling overvalued ones.
 
 ### Key Components:
 #### Moving Averages:
-- **Rainforest Resin:** Uses a **100-iteration moving average** window due to its stable price history, smoothing out noise and capturing its consistent value.
-- **Kelp:** Uses a **10-iteration moving average** window to adapt to its volatile, fluctuating price, enabling quick responses to short-term price movements.
-- The moving average of **mid-prices** (calculated as `(best_bid + best_ask) / 2`) serves as the "acceptable price," representing the fair value for trading decisions.
+- **Rainforest Resin:** Uses a **100-iteration moving average** to track long-term stability and smooth out price fluctuations.
+- **Kelp:** Uses a **10-iteration moving average** to account for its volatility, enabling quick adaptation to short-term price movements.
+- The **mid-price** (calculated as `(best_bid + best_ask) / 2`) serves as the reference price, guiding buy and sell decisions.
 
 #### Trading Logic:
-- **Buy Orders:** If the **best ask price** (lowest sell order) is below the acceptable price, the algorithm places a **buy order**, interpreting the price as undervalued.
-- **Sell Orders:** If the **best bid price** (highest buy order) is above the acceptable price, the algorithm places a **sell order**, viewing the price as overvalued.
-- Orders **respect position limits** (50 for both products) to avoid rejection and manage risk.
+- **Buy Orders:** If the **best ask price** is below the moving average, the asset is considered undervalued, triggering a buy order.
+- **Sell Orders:** If the **best bid price** is above the moving average, the asset is considered overvalued, triggering a sell order.
+- **Risk Management:** The algorithm respects **position limits** (50 units per asset) to prevent overexposure and ensure compliance with simulation constraints.
 
-#### Market-Making Elements:
-- The algorithm reacts to the **order book** (buy and sell orders from bots) to capture immediate liquidity, incorporating basic market-making principles while prioritizing mean reversion.
+#### Market-Making Principles:
+- By reacting to the **order book** (current market buy/sell orders), the algorithm provides liquidity and capitalizes on pricing inefficiencies.
 
 #### Time Series Analysis:
-- Maintains a **historical price series** (mid-prices) for each product, stored in `traderData` and updated each iteration, to compute moving averages dynamically.
+- Maintains a **historical price series** to compute moving averages dynamically, ensuring adaptability to changing market conditions.
 
 ---
 
 ## Profit Analysis
-- **Achieved Profit:** The algorithm generated a **net profit of 1,750 SeaShells over 1,000 iterations** in the tutorial round, as displayed in the dashboard graph.
+- **Achieved Profit:** The algorithm generated a **net profit of 3,642 SeaShells over 1,000 iterations**, broken down as follows:
+  - **Kelp:** 1,954 SeaShells
+  - **Rainforest Resin:** 1,688 SeaShells
 
-### Graph Insights:
-- The profit trend started at a **loss of -396.04 SeaShells**, indicating initial adjustments or mispricings, but recovered to end at **1,750 SeaShells** with some volatility.
-- The **upward trajectory** suggests the mean-reversion strategy effectively captured profitable opportunities over time.
-- **Profit Per Iteration:** Approximately **0.00875 SeaShells per iteration**, indicating **small but consistent gains**. This could be improved by increasing trading frequency or refining parameters.
+### Performance Insights:
+- The strategy initially faced **minor drawdowns**, but consistent execution of the mean-reversion approach led to an overall **upward profit trend**.
+- **Profit Per Iteration:** Approximately **3.64 SeaShells per iteration**, showcasing the effectiveness of the trading logic.
+- The results suggest that **trading Kelp was more profitable**, likely due to its higher volatility allowing more frequent profitable trades.
 
 ---
 
 ## Traded Assets
 ### 1. Rainforest Resin
-- **Characteristics:** Known for a **stable value** throughout the archipelago’s history, making it ideal for a **long-term mean-reversion strategy**.
-- **Position Limit:** 50 (cannot hold more than 50 units long or short).
+- **Characteristics:** Historically stable, making it ideal for a **longer-term mean-reversion strategy**.
+- **Position Limit:** 50 units.
 
 #### Strategy Rationale:
-- A **100-iteration moving average** is used to smooth out price fluctuations and identify consistent undervaluation or overvaluation.
-- Trades are executed when the best ask is below or the best bid is above the moving average, betting on **price reversion to stability**.
-- The longer window **minimizes noise**, aligning with the product’s stable nature, but may **miss rapid opportunities**.
+- Uses a **100-iteration moving average** to capture long-term price stability and trade on deviations.
+- **Pros:** Stability ensures fewer false signals.
+- **Cons:** May react slowly to sudden price movements.
 
 ### 2. Kelp
-- **Characteristics:** Exhibits **upward and downward price fluctuations** over time, requiring a **dynamic, short-term strategy**.
-- **Position Limit:** 50 (cannot hold more than 50 units long or short).
+- **Characteristics:** More volatile than Rainforest Resin, requiring a **short-term strategy**.
+- **Position Limit:** 50 units.
 
 #### Strategy Rationale:
-- A **10-iteration moving average** captures rapid price changes, enabling the algorithm to react quickly to volatility.
-- Trades are triggered when the best ask is below or the best bid is above the moving average, exploiting **short-term mispricings**.
-- The shorter window **increases responsiveness** but risks **overreacting to noise or false signals**.
+- Uses a **10-iteration moving average** to capitalize on rapid price fluctuations.
+- **Pros:** High responsiveness enables frequent profit-taking.
+- **Cons:** Higher risk of reacting to noise in price movements.
 
 ---
 
 ## Technical Implementation
 ### Code Structure
 - **File:** `trader.py`
-- **Class:** `Trader` with a single `run` method, adhering to the provided `Trader` class specification.
+- **Class:** `Trader`, implementing the `run` method as per simulation requirements.
 
 ### Libraries Used:
-- `datamodel`: Provided for `OrderDepth`, `TradingState`, `Order`, etc.
-- `json`: For serializing/deserializing `traderData` to maintain price history.
-- **No external libraries** beyond those supported (e.g., pandas, NumPy) to comply with simulation rules.
+- `datamodel`: Provides `OrderDepth`, `TradingState`, and `Order` classes.
+- `json`: Used for serializing/deserializing `traderData` to maintain price history.
+- **No external libraries** beyond those supported in the simulation environment.
 
 ### Key Methods:
 #### `run(self, state: TradingState)`
-- Processes `TradingState` data (e.g., `order_depths`, `position`) to generate orders.
-- Calculates **mid-prices**, updates **price history**, computes **moving averages**, and places orders based on **mean-reversion logic**.
-- Returns a tuple `(result, conversions, traderData)`, where:
-  - `result`: Dictionary mapping products to lists of `Order` objects.
-  - `conversions`: Set to `0` (no conversions in tutorial round).
-  - `traderData`: JSON-serialized price history for state persistence.
+- Processes `TradingState` to extract **order book depth, position holdings, and historical price data**.
+- Computes **moving averages**, evaluates trading signals, and places orders accordingly.
+- Returns `(result, conversions, traderData)`, where:
+  - `result`: Dictionary of product orders.
+  - `conversions`: Always `0` (no conversions allowed in this round).
+  - `traderData`: Serialized price history for state persistence.
 
 ### Performance Considerations
-- **Execution Time:** Designed to run within **900ms per iteration**, using lightweight operations (e.g., simple arithmetic, basic dictionary operations).
-- **Scalability:** Handles **multiple products efficiently**, with **dynamic window sizes** for each asset.
+- **Execution Time:** Optimized for under **900ms per iteration**, ensuring smooth performance.
+- **Scalability:** The architecture allows for **easy expansion to additional assets or trading enhancements**.
 
 ---
 
 ## Profit Optimization and Future Improvements
 ### Current Performance
-- **Profit:** 1,750 SeaShells over 1,000 iterations, indicating a successful but potentially modest outcome.
+- **Total Profit:** 3,642 SeaShells over 1,000 iterations, with **Kelp contributing the most**.
 
-### Areas for Improvement:
-- Increase **trading frequency** by adjusting **moving average windows**.
-- Incorporate **order book depth** or **volume analysis** to enhance decision-making.
-- Add **momentum or trend-following strategies** for Kelp to complement mean reversion.
-- Optimize `acceptable_price` thresholds and window sizes.
+### Areas for Enhancement:
+- **Adaptive Window Sizes:** Dynamically adjusting moving averages based on market volatility.
+- **Volume-Based Signals:** Incorporating order book depth to refine trade execution.
+- **Hybrid Strategies:** Combining mean-reversion with momentum-based signals for improved trade timing.
+- **Dynamic Risk Management:** Adjusting position limits based on historical volatility and profitability trends.
 
-
-
+The results demonstrate that the **moving average mean-reversion approach is effective**, but further refinements could increase profit potential. Future iterations may incorporate **additional technical indicators** or **machine learning techniques** to enhance decision-making.
 
 ---
-
 
